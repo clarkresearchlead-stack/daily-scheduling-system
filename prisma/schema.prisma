@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model CustomTab {
+  id       String @id @default(uuid())
+  title    String
+  position Int
+  tasks    Task[]
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  customTabId String?
+  customTab   CustomTab? @relation(fields: [customTabId], references: [id], onDelete: SetNull)
+  title       String
+  note        String    @default("")
+  startTime   String    @default("")
+  endTime     String    @default("")
+  currentTab  String    // "fixed", "active", "foraging", "deleted"
+  originTab   String    // "fixed", "active", "foraging"
+  deletedAt   DateTime?
+  tabName     String?   // Snapshot of tab title for deleted items
+}
