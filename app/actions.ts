@@ -64,7 +64,9 @@ function handleDbActionError(err: unknown): { success: false; error: string } {
   if (isRetryablePrismaError(err)) {
     return { success: false, error: 'Database is busy. Please try again.' }
   }
-  return { success: false, error: 'An unexpected error occurred.' }
+  
+  // Return the full error string to the frontend so we can see it in the toast
+  return { success: false, error: String((err as any)?.message || err) }
 }
 
 async function hasFixedOverlapTx(
