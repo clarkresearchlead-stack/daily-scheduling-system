@@ -57,6 +57,7 @@ async function withDbRetry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T>
 }
 
 function handleDbActionError(err: unknown): { success: false; error: string } {
+  console.error('[DB_ACTION_ERROR]', err)
   if (err instanceof ActionError) {
     return { success: false, error: err.message }
   }
