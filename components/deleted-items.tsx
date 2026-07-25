@@ -20,7 +20,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from '@/components/ui/empty'
-import { formatDeletedAt, useSchedule, type TabState } from '@/lib/schedule-store'
+import { formatDeletedAt, useSchedule } from '@/lib/schedule-store'
 
 const originLabels: Record<string, string> = {
   fixed:    'Fixed',

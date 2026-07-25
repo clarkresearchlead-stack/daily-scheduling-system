@@ -178,7 +178,7 @@ export function ScheduleProvider({
       if (!res.success) {
         // Revert UI on validation failure
         setTasks((prev) => prev.filter((t) => t.id !== id))
-        toast.error(res.error ?? 'Failed to create task')
+        toast.error(('error' in res ? res.error : null) ?? 'Failed to create task')
         return false
       }
       
@@ -210,7 +210,7 @@ export function ScheduleProvider({
       if (!res.success) {
         // Revert ALL optimistic tasks simultaneously on failure
         setTasks((prev) => prev.filter((t) => !optimisticIds.has(t.id)))
-        toast.error(res.error ?? 'Failed to create schedule batch')
+        toast.error(('error' in res ? res.error : null) ?? 'Failed to create schedule batch')
         return false
       }
 

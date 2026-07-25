@@ -1,15 +1,21 @@
 import { PrismaClient } from '@prisma/client'
 
-const prismaClientSingleton = () => {
-  return new PrismaClient()
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
 }
 
-declare global {
-  var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
+function createPrismaClient() {
+  return new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+  })
 }
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
+/**
+ * Always reuse one PrismaClient per serverless isolate.
+ * Without this, Next.js/Vercel warm invocations can spawn extra clients and
+ * exhaust Neon's pooled connection limit under concurrent schedule writes.
+ */
+const prisma = globalForPrisma.prisma ?? createPrismaClient()
+globalForPrisma.prisma = prisma
 
 export default prisma
-
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma

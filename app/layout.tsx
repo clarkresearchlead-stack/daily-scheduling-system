@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { ScheduleProvider } from '@/lib/schedule-store'
 import { ToastProvider } from '@/components/ui/toast'
 import { AppNav } from '@/components/app-nav'
+import prisma from '@/lib/prisma'
 import './globals.css'
 
 const _geistSans = Geist({ subsets: ['latin'] })
@@ -41,26 +42,23 @@ export const viewport: Viewport = {
   ],
 }
 
-import prisma from '@/lib/prisma'
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   let initialTabs = await prisma.customTab.findMany({ orderBy: { position: 'asc' } })
-  
+
   if (initialTabs.length === 0) {
     const defaultTab = await prisma.customTab.create({
-      data: { title: 'Project Alpha', position: 0 }
+      data: { title: 'Project Alpha', position: 0 },
     })
     initialTabs = [defaultTab]
   }
 
   const initialTasks = await prisma.task.findMany()
 
-  // Format Dates to string so they can be passed securely from Server to Client Component
-  const serializedTasks = initialTasks.map(t => ({
+  const serializedTasks = initialTasks.map((t) => ({
     ...t,
     deletedAt: t.deletedAt ? t.deletedAt.toISOString() : null,
   }))
